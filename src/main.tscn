@@ -1,6 +1,9 @@
-[gd_scene load_steps=4 format=3 uid="uid://deas38ggeoodb"]
+[gd_scene load_steps=5 format=3 uid="uid://deas38ggeoodb"]
 
 [ext_resource type="Script" path="res://src/main.gd" id="1_q6u24"]
+
+[sub_resource type="SystemFont" id="SystemFont_c4g7w"]
+font_names = PackedStringArray("Monospace")
 
 [sub_resource type="SystemFont" id="SystemFont_xmk78"]
 font_names = PackedStringArray("Monospace")
@@ -11,8 +14,7 @@ font_size = 20
 outline_size = 3
 outline_color = Color(0, 0, 0, 1)
 
-[node name="Main" type="Control"]
-layout_mode = 3
+[node name="Main" type="MarginContainer"]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -21,71 +23,127 @@ grow_vertical = 2
 script = ExtResource("1_q6u24")
 metadata/_edit_lock_ = true
 
-[node name="BG" type="ColorRect" parent="."]
-layout_mode = 1
-anchors_preset = 15
+[node name="Control" type="Control" parent="."]
+layout_mode = 2
+mouse_filter = 1
+
+[node name="BG" type="ColorRect" parent="Control"]
+top_level = true
+z_index = -100
+layout_mode = 2
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
 color = Color(0, 0, 0, 1)
 metadata/_edit_lock_ = true
+metadata/_edit_use_anchors_ = true
 
-[node name="CodeEdit" type="CodeEdit" parent="."]
+[node name="CodeEdit" type="CodeEdit" parent="Control"]
 unique_name_in_owner = true
-layout_mode = 1
-anchors_preset = -1
+layout_mode = 2
 anchor_right = 0.444444
 anchor_bottom = 1.0
 grow_vertical = 2
+theme_override_fonts/font = SubResource("SystemFont_c4g7w")
 theme_override_font_sizes/font_size = 24
+text = "MOV r0, #0
+MOV r1, #0
+
+LOOP:
+	CMP r1, #100
+	BGE DONE
+	STR r0, [r1]
+	ADD r0, r0, #0x4
+	ADD r1, r1, #1
+	B LOOP
+
+DONE"
 placeholder_text = "Code"
 scroll_smooth = true
+minimap_width = 20
+caret_blink = true
 highlight_all_occurrences = true
 highlight_current_line = true
 symbol_lookup_on_click = true
 line_folding = true
+gutters_draw_breakpoints_gutter = true
+gutters_draw_executing_lines = true
 gutters_draw_line_numbers = true
+gutters_zero_pad_line_numbers = true
+gutters_draw_fold_gutter = true
 indent_automatic = true
 indent_automatic_prefixes = Array[String]([":"])
 auto_brace_completion_enabled = true
 auto_brace_completion_highlight_matching = true
 metadata/_edit_use_anchors_ = true
 
-[node name="RunButton" type="Button" parent="."]
-unique_name_in_owner = true
+[node name="HBoxContainer" type="HBoxContainer" parent="Control/CodeEdit"]
 layout_mode = 1
-anchors_preset = 1
-anchor_left = 1.0
+anchors_preset = 12
+anchor_top = 1.0
 anchor_right = 1.0
-offset_left = -39.0
-offset_bottom = 31.0
-grow_horizontal = 0
-text = "Run"
+anchor_bottom = 1.0
+offset_top = -40.0
+offset_right = 0.000518799
+grow_horizontal = 2
+grow_vertical = 0
 
-[node name="DecimalCheck" type="CheckBox" parent="."]
+[node name="RunButton" type="Button" parent="Control/CodeEdit/HBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
-anchor_left = 0.444
-anchor_top = 0.654
-anchor_right = 0.444
-anchor_bottom = 0.654
-offset_left = 0.511963
-offset_top = 0.207977
-offset_right = 156.512
-offset_bottom = 31.208
+size_flags_horizontal = 3
+tooltip_text = "F5"
+text = "Run"
+
+[node name="RunAllButton" type="Button" parent="Control/CodeEdit/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+tooltip_text = "F5"
+text = "Run all at once"
+
+[node name="StepButton" type="Button" parent="Control/CodeEdit/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+tooltip_text = "F6"
+text = "Step"
+
+[node name="StopButton" type="Button" parent="Control/CodeEdit/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+tooltip_text = "F7"
+text = "Stop/Resume"
+
+[node name="Information" type="Control" parent="Control"]
+layout_mode = 2
+anchors_preset = 0
+anchor_left = 0.451389
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 1
+
+[node name="DecimalCheck" type="CheckBox" parent="Control/Information"]
+unique_name_in_owner = true
+layout_mode = 2
+anchor_top = 0.679
+anchor_bottom = 0.679
+offset_left = -9.15528e-05
+offset_top = 0.00799561
+offset_right = 156.0
+offset_bottom = 31.0081
 text = "Show as decimal"
 
-[node name="ScrollContainer" type="ScrollContainer" parent="."]
+[node name="ScrollContainer" type="ScrollContainer" parent="Control/Information"]
 layout_mode = 1
 anchors_preset = -1
-anchor_left = 0.444
-anchor_right = 0.444
-offset_left = 0.511963
-offset_right = 272.512
-offset_bottom = 424.0
+offset_right = 272.0
+offset_bottom = 440.0
 
-[node name="Registers" type="Label" parent="ScrollContainer"]
+[node name="Registers" type="Label" parent="Control/Information/ScrollContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 text = "r0: 0x00000000
@@ -104,3 +162,50 @@ r0: 0x00000000
 r0: 0x00000000
 r0: 0x00000000"
 label_settings = SubResource("LabelSettings_ipk22")
+
+[node name="ScrollContainer2" type="ScrollContainer" parent="Control/Information"]
+layout_mode = 1
+anchors_preset = -1
+offset_left = 272.0
+offset_right = 632.0
+offset_bottom = 440.0
+
+[node name="Memory" type="Label" parent="Control/Information/ScrollContainer2"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "0x00000000: 0x00000000
+0x00000000: 0x00000000
+0x00000000: 0x00000000
+0x00000000: 0x00000000
+0x00000000: 0x00000000
+0x00000000: 0x00000000
+0x00000000: 0x00000000
+0x00000000: 0x00000000
+0x00000000: 0x00000000
+0x00000000: 0x00000000
+0x00000000: 0x00000000
+0x00000000: 0x00000000
+0x00000000: 0x00000000
+0x00000000: 0x00000000
+0x00000000: 0x00000000"
+label_settings = SubResource("LabelSettings_ipk22")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Control/Information"]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 0
+grow_vertical = 0
+
+[node name="SaveButton" type="Button" parent="Control/Information/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Save"
+
+[node name="BackButton" type="Button" parent="Control/Information/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Back"

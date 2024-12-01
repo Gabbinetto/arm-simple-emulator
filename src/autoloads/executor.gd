@@ -1,5 +1,9 @@
 extends Node
 
+signal executing_line(line: int)
+signal error(line: int, msg: String)
+signal finished
+
 enum Conditions {
 	EQ = 0b0000,
 	NE = 0b0001,
@@ -27,6 +31,7 @@ const WORD_SIZE: int = 32
 const MAX_UINT32: int = 0xFFFFFFFF
 const MAX_UINT16: int = 0xFFFF
 const MAX_UINT8: int = 0xFF
+const POSSIBLE_REGISTERS: Array[String] = ["r0", "r1", "r2", "r3", "r4", "r5", "r6", "r7", "r8", "r9", "r10", "r11", "r12", "r13", "r14", "r15", "sp", "lr", "pc"]
 
 var registers: Dictionary = {
 	"r0": 0x0,
@@ -56,97 +61,97 @@ var r0: int:
 	get:
 		return bit32(registers["r0"])
 	set(value):
-		registers["r0"] = bit32(value)
+		registers["r0"] = clampi(bit32(value), 0x0, MAX_UINT32)
 var r1: int:
 	get:
 		return bit32(registers["r1"])
 	set(value):
-		registers["r1"] = bit32(value)
+		registers["r1"] = clampi(bit32(value), 0x0, MAX_UINT32)
 var r2: int:
 	get:
 		return bit32(registers["r2"])
 	set(value):
-		registers["r2"] = bit32(value)
+		registers["r2"] = clampi(bit32(value), 0x0, MAX_UINT32)
 var r3: int:
 	get:
 		return bit32(registers["r3"])
 	set(value):
-		registers["r3"] = bit32(value)
+		registers["r3"] = clampi(bit32(value), 0x0, MAX_UINT32)
 var r4: int:
 	get:
 		return bit32(registers["r4"])
 	set(value):
-		registers["r4"] = bit32(value)
+		registers["r4"] = clampi(bit32(value), 0x0, MAX_UINT32)
 var r5: int:
 	get:
 		return bit32(registers["r5"])
 	set(value):
-		registers["r5"] = bit32(value)
+		registers["r5"] = clampi(bit32(value), 0x0, MAX_UINT32)
 var r6: int:
 	get:
 		return bit32(registers["r6"])
 	set(value):
-		registers["r6"] = bit32(value)
+		registers["r6"] = clampi(bit32(value), 0x0, MAX_UINT32)
 var r7: int:
 	get:
 		return bit32(registers["r7"])
 	set(value):
-		registers["r7"] = bit32(value)
+		registers["r7"] = clampi(bit32(value), 0x0, MAX_UINT32)
 var r8: int:
 	get:
 		return bit32(registers["r8"])
 	set(value):
-		registers["r8"] = bit32(value)
+		registers["r8"] = clampi(bit32(value), 0x0, MAX_UINT32)
 var r9: int:
 	get:
 		return bit32(registers["r9"])
 	set(value):
-		registers["r9"] = bit32(value)
+		registers["r9"] = clampi(bit32(value), 0x0, MAX_UINT32)
 var r10: int:
 	get:
 		return bit32(registers["r10"])
 	set(value):
-		registers["r10"] = bit32(value)
+		registers["r10"] = clampi(bit32(value), 0x0, MAX_UINT32)
 var r11: int:
 	get:
 		return bit32(registers["r11"])
 	set(value):
-		registers["r11"] = bit32(value)
+		registers["r11"] = clampi(bit32(value), 0x0, MAX_UINT32)
 var r12: int:
 	get:
 		return bit32(registers["r12"])
 	set(value):
-		registers["r12"] = bit32(value)
+		registers["r12"] = clampi(bit32(value), 0x0, MAX_UINT32)
 var r13: int:
 	get:
 		return bit32(registers["r13"])
 	set(value):
-		registers["r13"] = bit32(value)
+		registers["r13"] = clampi(bit32(value), 0x0, MAX_UINT32)
 var r14: int:
 	get:
 		return bit32(registers["r14"])
 	set(value):
-		registers["r14"] = bit32(value)
+		registers["r14"] = clampi(bit32(value), 0x0, MAX_UINT32)
 var r15: int:
 	get:
 		return bit32(registers["r15"])
 	set(value):
-		registers["r15"] = bit32(value)
+		registers["r15"] = clampi(bit32(value), 0x0, MAX_UINT32)
 var sp: int:
 	get:
 		return bit32(registers["r13"])
 	set(value):
-		registers["r13"] = bit32(value)
+		registers["r13"] = clampi(bit32(value), 0x0, MAX_UINT32)
 var lr: int:
 	get:
 		return bit32(registers["r14"])
 	set(value):
-		registers["r14"] = bit32(value)
+		registers["r14"] = clampi(bit32(value), 0x0, MAX_UINT32)
 var pc: int:
 	get:
 		return bit32(registers["r15"])
 	set(value):
-		registers["r15"] = bit32(value)
+		registers["r15"] = clampi(bit32(value), 0x0, MAX_UINT32)
 #endregion
 var alu_flags: int = 0b0000  # NZCV
 #region ALU shorthands
@@ -168,7 +173,9 @@ var v_flag: bool:
 func tokenize(lines: String) -> Array[CommandInfo]:
 	var tokens: Array[CommandInfo] = []
 
-	for line: String in lines.split("\n"):
+	var split: PackedStringArray = lines.split("\n")
+	for i: int in split.size():
+		var line = split[i]
 		line = line.strip_edges().to_lower()
 		line = line.get_slice(COMMENT_CHARACTER, 0)
 		if line.is_empty():
@@ -193,7 +200,7 @@ func tokenize(lines: String) -> Array[CommandInfo]:
 					condition = Conditions[key]
 					break
 
-		tokens.append(CommandInfo.new(command, args, condition, args.size() <= 0))
+		tokens.append(CommandInfo.new(command, args, condition, args.size() <= 0, i + 1))
 
 	return tokens
 
@@ -214,15 +221,28 @@ func parse(lines: String) -> void:
 
 
 func run_line() -> void:
-	if not running:
+	if not running or pc > code.keys()[-1]:
 		return
-	print("PC: 0x%X" % pc)
 	var command: CommandInfo = code[pc]
 	if not command.is_tag and flag_check(command.condition):
+		var err: String = Command.error_check(command)
+		if err != Command.ERR_STR_OK:
+			stop()
+			error.emit(command.line, err)
+			return
+
 		Command.run_command(command)
+		executing_line.emit(command.line)
 	pc += 0x4
 	if pc > code.keys()[-1]:
-		running = false
+		stop()
+		finished.emit()
+
+func start() -> void:
+	running = true
+
+func stop() -> void:
+	running = false
 
 
 func set_flags(op1: int, op2: int, is_subtraction: bool = false) -> void:
@@ -315,14 +335,17 @@ class CommandInfo:
 	var args: Array[String]
 	var condition: Conditions
 	var is_tag: bool = false
+	var line: int = 0
 
 	func _init(
 		_command: String,
 		_args: Array[String] = [],
 		_condition: Conditions = Conditions.AL,
-		_is_tag: bool = false
+		_is_tag: bool = false,
+		_line: int = 0
 	) -> void:
 		command = _command
 		args = _args
 		condition = _condition
 		is_tag = _is_tag
+		line = _line

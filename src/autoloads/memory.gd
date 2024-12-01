@@ -1,7 +1,7 @@
 extends Node
 
 
-const STACK_POINTER_ADDRESS: int = 0x60000 # Arbitrary definition
+const STACK_POINTER_ADDRESS: int = Executor.MAX_UINT32 - 3
 
 
 var _memory: Dictionary = {}
@@ -29,6 +29,10 @@ func mem_load_byte(address: int) -> int:
     var value: int = _memory.get(address, 0x0) & mask
     value >>= byte * 0x4
     return Executor.bit8(value)
+
+
+func get_set_address() -> Array:
+    return _memory.keys()
 
 
 func _ready() -> void:
