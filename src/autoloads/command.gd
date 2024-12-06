@@ -187,17 +187,19 @@ func run_command(info: Executor.CommandInfo) -> void:
 			var address: int = parse_address(info.args.slice(1))
 			Executor.set(info.args[0], Memory.mem_load_byte(address))
 		PUSH:
-			info.args.assign(
+			var args: Array[String] = []
+			args.assign(
 				info.args.map(func(item: String): return item.lstrip("{").rstrip("}"))
 			)
-			for register: String in info.args:
+			for register: String in args:
 				Memory.mem_store(Executor.sp, reg(register))
 				Executor.sp -= 0x4
 		POP:
-			info.args.assign(
+			var args: Array[String] = []
+			args.assign(
 				info.args.map(func(item: String): return item.lstrip("{").rstrip("}"))
 			)
-			for register: String in info.args:
+			for register: String in args:
 				Executor.sp += 0x4
 				Executor.set(
 					register,
@@ -222,13 +224,13 @@ func run_command(info: Executor.CommandInfo) -> void:
 
 
 func parse_value(value: String) -> int:
-	if value[0] == "#":
+	if value[0] == Executor.IMMEDIATE_CHARACTER:
 		return parse_immediate(value)
 	return Executor.get(value)
 
 
 func parse_immediate(num: String) -> int:
-	var num_string: String = num.lstrip("#")
+	var num_string: String = num.lstrip(Executor.IMMEDIATE_CHARACTER)
 	if num_string.containsn("x"):
 		return num_string.hex_to_int()
 	elif num_string.containsn("b"):
@@ -240,7 +242,7 @@ func parse_immediate(num: String) -> int:
 func parse_address(args: Array[String]) -> int:
 	var remove_brackets: Callable = func(string: String): return string.lstrip("[").rstrip("]")
 
-	if args.front() == "#":
+	if args.front() == Executor.IMMEDIATE_CHARACTER:
 		return parse_immediate(args.front())
 
 	var pre_index_end: int = 0
@@ -299,32 +301,18 @@ func reg(register: String) -> int:
 		return 0
 
 
-func _ready() -> void:
-	print(
-		String.num_uint64(
-			-1 & Executor.MAX_UINT32 - (Executor.MAX_UINT32 + 1),
-			10, true
-		).lpad(64, "0")
-	)
-
-
 func check_register(s: String) -> bool:
-	if s[0] != "r":
-		return false
-	s = s.substr(1)
-	if not s.is_valid_int() or int(s) < 0 or int(s) > 15:
-		return false
-	return true
+	return Executor.POSSIBLE_REGISTERS.has(s)
 
 func check_immediate(s: String) -> bool:
-	if s[0] != "#":
+	if s[0] != Executor.IMMEDIATE_CHARACTER:
 		return false
 	return s.substr(1).is_valid_int()
 
 func check_value(s: String) -> bool:
-	if s[0] == "r":
+	if s[0] == "r" or ["sp", "lr", "lr"].has(s):
 		return check_register(s)
-	if s[0] == "#":
+	if s[0] == Executor.IMMEDIATE_CHARACTER:
 		return check_immediate(s)
 	else:
 		return false
@@ -372,19 +360,17 @@ func error_check(command: Executor.CommandInfo) -> String:
 			var has_start: bool = false
 			var has_end: bool = false
 			for i: int in range(1, command.args.size()):
-				print(command.args[i])
 				if command.args[i][0] == "[": has_start = true
 				if command.args[i][-1] == "]": has_end = true
 				var s: String = command.args[i].lstrip("[").rstrip("]")
 				if not check_value(s):
 					return ERR_NOT_VAL % [command.line, i]
 			if not (has_start or has_end):
-				prints(has_start, has_end)
 				return ERR_BRACKETS % command.line
 		PUSH, POP:
 			if command.args.size() < 1:
 				return ERR_ARG_NUM % [command.line, command.command]
-			if command.args.front()[0] != "{" and command.args.back()[-1] != "}":
+			if command.args.front()[0] != "{" or command.args.back()[-1] != "}":
 				return ERR_BRACES % command.line
 			for i: int in range(1, command.args.size() - 1):
 				var s: String = command.args[i].lstrip("{").rstrip("}")

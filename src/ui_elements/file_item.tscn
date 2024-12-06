@@ -5,15 +5,18 @@
 [node name="FileItem" type="HBoxContainer"]
 offset_right = 40.0
 offset_bottom = 40.0
-theme_override_constants/separation = 0
+theme_override_constants/separation = 24
 script = ExtResource("1_jjc7h")
 
 [node name="Button" type="Button" parent="."]
 layout_mode = 2
 size_flags_horizontal = 3
+theme_type_variation = &"FlatButton"
 text = "Filename"
 flat = true
 
 [node name="DeleteButton" type="Button" parent="."]
+custom_minimum_size = Vector2(96, 40)
 layout_mode = 2
-text = "Delete"
+theme_type_variation = &"AccentButton"
+text = "DELETE"

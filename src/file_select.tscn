@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3 uid="uid://63w0jy8olmjq"]
+[gd_scene load_steps=3 format=3 uid="uid://63w0jy8olmjq"]
 
 [ext_resource type="Script" path="res://src/file_select.gd" id="1_4cen2"]
+[ext_resource type="Theme" uid="uid://bnh6s0g558nne" path="res://themes/dark.tres" id="1_4mcoc"]
 
 [node name="FileSelect" type="Control"]
 layout_mode = 3
@@ -9,21 +10,55 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+theme = ExtResource("1_4mcoc")
 script = ExtResource("1_4cen2")
 
-[node name="BG" type="ColorRect" parent="."]
+[node name="PanelContainer" type="PanelContainer" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0, 0, 0, 1)
+mouse_filter = 2
+
+[node name="Panel" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 56.0
+grow_horizontal = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Panel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 64.0
+offset_right = -8.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Label" type="Label" parent="Panel/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 1
+theme_override_font_sizes/font_size = 32
+text = "ARM Emulator"
+vertical_alignment = 1
+
+[node name="ThemeButton" type="Button" parent="Panel/HBoxContainer"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+text = " DARK"
+flat = true
 
 [node name="ScrollContainer" type="ScrollContainer" parent="."]
 layout_mode = 2
+offset_left = 32.0
 offset_top = 64.0
-offset_right = 1152.0
+offset_right = 1120.0
 offset_bottom = 576.0
 
 [node name="FileList" type="VBoxContainer" parent="ScrollContainer"]
@@ -39,11 +74,12 @@ anchor_left = 0.943
 anchor_top = 0.898
 anchor_right = 0.943
 anchor_bottom = 0.898
-offset_left = -30.3361
+offset_left = -38.3361
 offset_top = -29.9041
-offset_right = 29.6639
+offset_right = 37.6639
 offset_bottom = 30.0959
-text = "New"
+theme_type_variation = &"AccentButton"
+text = "NEW"
 metadata/_edit_use_anchors_ = true
 
 [node name="FilenameInput" type="LineEdit" parent="."]
@@ -61,7 +97,7 @@ offset_right = 288.0
 offset_bottom = 16.0
 grow_horizontal = 2
 grow_vertical = 2
-placeholder_text = "Filename"
+placeholder_text = "filename.arm"
 virtual_keyboard_type = 6
 
 [node name="HBoxContainer" type="HBoxContainer" parent="FilenameInput"]
@@ -69,18 +105,21 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_top = 27.0
-offset_bottom = 27.0
+offset_top = 46.0
+offset_bottom = 46.0
 grow_horizontal = 2
 grow_vertical = 2
+theme_override_constants/separation = 8
 alignment = 2
 
 [node name="ConfirmButton" type="Button" parent="FilenameInput/HBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
-text = "Ok"
+theme_type_variation = &"AccentButton"
+text = " OK "
 
 [node name="CancelButton" type="Button" parent="FilenameInput/HBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
-text = "Cancel"
+theme_type_variation = &"AccentButton"
+text = " CANCEL "

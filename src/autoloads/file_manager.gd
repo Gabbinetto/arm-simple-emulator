@@ -3,7 +3,6 @@ extends Node
 
 func save_file(filename: String, text: String) -> void:
 	var file: FileAccess = FileAccess.open("user://" + filename, FileAccess.WRITE)
-	print(text)
 	file.store_string(text)
 
 

@@ -25,6 +25,7 @@ enum Conditions {
 }
 
 const COMMENT_CHARACTER: String = ";"
+const IMMEDIATE_CHARACTER: String = "#"
 const SEPARATOR: String = ","
 const STRIP_CHARS: String = ",: \n"
 const WORD_SIZE: int = 32
@@ -186,9 +187,7 @@ func tokenize(lines: String) -> Array[CommandInfo]:
 		var args: Array[String] = []
 		if space_index != -1 and space_index != line.length() - 1:
 			args.assign(
-				Array(line.substr(space_index).split(SEPARATOR)).map(
-					func(arg: String): return arg.strip_edges()
-				)
+				Array(line.substr(space_index).split(SEPARATOR)).map(func(arg: String): return arg.strip_edges())
 			)
 
 		var command: String = line.substr(0, space_index).rstrip(STRIP_CHARS)
@@ -221,7 +220,7 @@ func parse(lines: String) -> void:
 
 
 func run_line() -> void:
-	if not running or pc > code.keys()[-1]:
+	if code.is_empty() or not running or pc > code.keys()[-1]:
 		return
 	var command: CommandInfo = code[pc]
 	if not command.is_tag and flag_check(command.condition):

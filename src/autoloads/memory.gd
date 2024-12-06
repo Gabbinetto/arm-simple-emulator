@@ -32,7 +32,13 @@ func mem_load_byte(address: int) -> int:
 
 
 func get_set_address() -> Array:
-    return _memory.keys()
+    var keys: Array = _memory.keys()
+    keys.sort()
+    return keys
+
+
+func clear() -> void:
+    _memory.clear()
 
 
 func _ready() -> void:

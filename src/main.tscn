@@ -1,68 +1,55 @@
 [gd_scene load_steps=5 format=3 uid="uid://deas38ggeoodb"]
 
+[ext_resource type="Theme" uid="uid://bnh6s0g558nne" path="res://themes/dark.tres" id="1_kn63s"]
 [ext_resource type="Script" path="res://src/main.gd" id="1_q6u24"]
+[ext_resource type="FontFile" uid="uid://dtwyvia1o8rd" path="res://font/RobotoMono-Medium.ttf" id="3_hgoxb"]
 
-[sub_resource type="SystemFont" id="SystemFont_c4g7w"]
-font_names = PackedStringArray("Monospace")
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_mm37v"]
+content_margin_left = 16.0
+content_margin_right = 16.0
 
-[sub_resource type="SystemFont" id="SystemFont_xmk78"]
-font_names = PackedStringArray("Monospace")
-
-[sub_resource type="LabelSettings" id="LabelSettings_ipk22"]
-font = SubResource("SystemFont_xmk78")
-font_size = 20
-outline_size = 3
-outline_color = Color(0, 0, 0, 1)
-
-[node name="Main" type="MarginContainer"]
+[node name="Main" type="Control"]
+layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+theme = ExtResource("1_kn63s")
 script = ExtResource("1_q6u24")
-metadata/_edit_lock_ = true
-
-[node name="Control" type="Control" parent="."]
-layout_mode = 2
-mouse_filter = 1
-
-[node name="BG" type="ColorRect" parent="Control"]
-top_level = true
-z_index = -100
-layout_mode = 2
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 2
-color = Color(0, 0, 0, 1)
 metadata/_edit_lock_ = true
 metadata/_edit_use_anchors_ = true
 
-[node name="CodeEdit" type="CodeEdit" parent="Control"]
+[node name="PanelContainer" type="PanelContainer" parent="."]
+layout_mode = 2
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+metadata/_edit_use_anchors_ = true
+
+[node name="Grid" type="GridContainer" parent="PanelContainer"]
 unique_name_in_owner = true
 layout_mode = 2
-anchor_right = 0.444444
-anchor_bottom = 1.0
-grow_vertical = 2
-theme_override_fonts/font = SubResource("SystemFont_c4g7w")
+theme_override_constants/h_separation = 0
+columns = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/Grid"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+size_flags_stretch_ratio = 0.9
+theme_override_constants/separation = 0
+metadata/_edit_group_ = true
+metadata/_edit_use_anchors_ = true
+
+[node name="CodeEdit" type="CodeEdit" parent="PanelContainer/Grid/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
 theme_override_font_sizes/font_size = 24
-text = "MOV r0, #0
-MOV r1, #0
-
-LOOP:
-	CMP r1, #100
-	BGE DONE
-	STR r0, [r1]
-	ADD r0, r0, #0x4
-	ADD r1, r1, #1
-	B LOOP
-
-DONE"
 placeholder_text = "Code"
 scroll_smooth = true
-minimap_width = 20
+minimap_draw = true
 caret_blink = true
 highlight_all_occurrences = true
 highlight_current_line = true
@@ -79,73 +66,71 @@ auto_brace_completion_enabled = true
 auto_brace_completion_highlight_matching = true
 metadata/_edit_use_anchors_ = true
 
-[node name="HBoxContainer" type="HBoxContainer" parent="Control/CodeEdit"]
-layout_mode = 1
-anchors_preset = 12
-anchor_top = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_top = -40.0
-offset_right = 0.000518799
-grow_horizontal = 2
-grow_vertical = 0
+[node name="HBoxContainer" type="HBoxContainer" parent="PanelContainer/Grid/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 0
 
-[node name="RunButton" type="Button" parent="Control/CodeEdit/HBoxContainer"]
+[node name="RunButton" type="Button" parent="PanelContainer/Grid/VBoxContainer/HBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 tooltip_text = "F5"
-text = "Run"
+text = "RUN"
 
-[node name="RunAllButton" type="Button" parent="Control/CodeEdit/HBoxContainer"]
+[node name="VSeparator" type="VSeparator" parent="PanelContainer/Grid/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+
+[node name="RunAllButton" type="Button" parent="PanelContainer/Grid/VBoxContainer/HBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
-tooltip_text = "F5"
-text = "Run all at once"
+tooltip_text = "Shift+F5"
+text = "RUN ALL"
 
-[node name="StepButton" type="Button" parent="Control/CodeEdit/HBoxContainer"]
+[node name="VSeparator2" type="VSeparator" parent="PanelContainer/Grid/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+
+[node name="StepButton" type="Button" parent="PanelContainer/Grid/VBoxContainer/HBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 tooltip_text = "F6"
-text = "Step"
+text = "STEP"
 
-[node name="StopButton" type="Button" parent="Control/CodeEdit/HBoxContainer"]
+[node name="VSeparator3" type="VSeparator" parent="PanelContainer/Grid/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+
+[node name="StopButton" type="Button" parent="PanelContainer/Grid/VBoxContainer/HBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 tooltip_text = "F7"
-text = "Stop/Resume"
+text = "STOP"
 
-[node name="Information" type="Control" parent="Control"]
+[node name="Information" type="VBoxContainer" parent="PanelContainer/Grid"]
 layout_mode = 2
-anchors_preset = 0
-anchor_left = 0.451389
-anchor_right = 1.0
-anchor_bottom = 1.0
-mouse_filter = 1
+size_flags_horizontal = 3
+size_flags_vertical = 3
+size_flags_stretch_ratio = 1.1
 
-[node name="DecimalCheck" type="CheckBox" parent="Control/Information"]
+[node name="DecimalCheck" type="CheckBox" parent="PanelContainer/Grid/Information"]
 unique_name_in_owner = true
 layout_mode = 2
-anchor_top = 0.679
-anchor_bottom = 0.679
-offset_left = -9.15528e-05
-offset_top = 0.00799561
-offset_right = 156.0
-offset_bottom = 31.0081
-text = "Show as decimal"
+size_flags_horizontal = 4
+text = " DECIMAL "
+flat = true
 
-[node name="ScrollContainer" type="ScrollContainer" parent="Control/Information"]
-layout_mode = 1
-anchors_preset = -1
-offset_right = 272.0
-offset_bottom = 440.0
+[node name="ScrollContainer" type="ScrollContainer" parent="PanelContainer/Grid/Information"]
+layout_mode = 2
+size_flags_vertical = 3
 
-[node name="Registers" type="Label" parent="Control/Information/ScrollContainer"]
+[node name="Registers" type="Label" parent="PanelContainer/Grid/Information/ScrollContainer"]
 unique_name_in_owner = true
 layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 6
+theme_override_constants/line_spacing = 0
+theme_override_fonts/font = ExtResource("3_hgoxb")
 text = "r0: 0x00000000
 r0: 0x00000000
 r0: 0x00000000
@@ -161,18 +146,22 @@ r0: 0x00000000
 r0: 0x00000000
 r0: 0x00000000
 r0: 0x00000000"
-label_settings = SubResource("LabelSettings_ipk22")
 
-[node name="ScrollContainer2" type="ScrollContainer" parent="Control/Information"]
-layout_mode = 1
-anchors_preset = -1
-offset_left = 272.0
-offset_right = 632.0
-offset_bottom = 440.0
+[node name="HSeparator" type="HSeparator" parent="PanelContainer/Grid/Information"]
+layout_mode = 2
+theme_override_constants/separation = 0
 
-[node name="Memory" type="Label" parent="Control/Information/ScrollContainer2"]
+[node name="ScrollContainer2" type="ScrollContainer" parent="PanelContainer/Grid/Information"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Memory" type="Label" parent="PanelContainer/Grid/Information/ScrollContainer2"]
 unique_name_in_owner = true
 layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 6
+theme_override_constants/line_spacing = 0
+theme_override_fonts/font = ExtResource("3_hgoxb")
 text = "0x00000000: 0x00000000
 0x00000000: 0x00000000
 0x00000000: 0x00000000
@@ -188,24 +177,87 @@ text = "0x00000000: 0x00000000
 0x00000000: 0x00000000
 0x00000000: 0x00000000
 0x00000000: 0x00000000"
-label_settings = SubResource("LabelSettings_ipk22")
 
-[node name="HBoxContainer" type="HBoxContainer" parent="Control/Information"]
-layout_mode = 1
-anchors_preset = 3
-anchor_left = 1.0
+[node name="HBoxContainer" type="HBoxContainer" parent="PanelContainer/Grid/Information"]
+layout_mode = 2
+theme_override_constants/separation = 0
+alignment = 2
+
+[node name="ClearMemButton" type="Button" parent="PanelContainer/Grid/Information/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = " CLEAR MEMORY "
+
+[node name="VSeparator" type="VSeparator" parent="PanelContainer/Grid/Information/HBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="ConsoleButton" type="Button" parent="PanelContainer/Grid/Information/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = " CONSOLE "
+
+[node name="Filler" type="Button" parent="PanelContainer/Grid/Information/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+disabled = true
+
+[node name="SaveButton" type="Button" parent="PanelContainer/Grid/Information/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+tooltip_text = "Ctrl+S"
+text = " SAVE "
+
+[node name="VSeparator2" type="VSeparator" parent="PanelContainer/Grid/Information/HBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="BackButton" type="Button" parent="PanelContainer/Grid/Information/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = " BACK "
+
+[node name="ConsoleContainer" type="PanelContainer" parent="."]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-grow_horizontal = 0
-grow_vertical = 0
+offset_top = -184.0
+metadata/_edit_use_anchors_ = true
+metadata/_edit_group_ = true
 
-[node name="SaveButton" type="Button" parent="Control/Information/HBoxContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="ConsoleContainer"]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="ConsoleContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="ClearConsoleButton" type="Button" parent="ConsoleContainer/VBoxContainer/HBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
-text = "Save"
+text = " CLEAR "
 
-[node name="BackButton" type="Button" parent="Control/Information/HBoxContainer"]
+[node name="Filler" type="Button" parent="ConsoleContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+disabled = true
+
+[node name="ConsoleCloseButton" type="Button" parent="ConsoleContainer/VBoxContainer/HBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
-text = "Back"
+text = " X "
+
+[node name="ScrollContainer" type="ScrollContainer" parent="ConsoleContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="ConsoleText" type="Label" parent="ConsoleContainer/VBoxContainer/ScrollContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_font_sizes/font_size = 28
+theme_override_styles/normal = SubResource("StyleBoxEmpty_mm37v")
