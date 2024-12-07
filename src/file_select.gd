@@ -7,8 +7,21 @@ const FileItem: PackedScene = preload("res://src/ui_elements/file_item.tscn")
 @onready var filename_input: LineEdit = %FilenameInput
 @onready var confirm_button: Button = %ConfirmButton
 @onready var cancel_button: Button = %CancelButton
+@onready var theme_button: Button = %ThemeButton
 
 func _ready() -> void:
+	var refresh_theme: Callable = func(): theme = Settings.theme
+
+	var refresh_button_text: Callable = func(): theme_button.text = "LIGHT" if Settings.dark_theme else "DARK"
+	Settings.theme_changed.connect(refresh_theme)
+	refresh_theme.call()
+	refresh_button_text.call()
+	theme_button.pressed.connect(
+		func():
+			Settings.dark_theme = not Settings.dark_theme
+			refresh_button_text.call()
+	)
+
 	var dir: DirAccess = DirAccess.open("user://")
 
 	for filename: String in dir.get_files():

@@ -25,6 +25,10 @@ var last_executed_line: int = -1
 var last_error_line: int = 0
 
 func _ready() -> void:
+	var refresh_theme: Callable = func(): theme = Settings.theme
+	Settings.theme_changed.connect(refresh_theme)
+	refresh_theme.call()
+
 	var _on_screen_size_changed: Callable = func():
 		var viewport_size: Vector2 = get_viewport().size
 		var ratio: float = viewport_size.x / viewport_size.y
@@ -40,8 +44,20 @@ func _ready() -> void:
 	file_name = SceneTransition.data.filename
 	code.text = SceneTransition.data.text
 	save_button.pressed.connect(func(): FileManager.save_file(file_name, code.text))
-	back_button.pressed.connect(func(): SceneTransition.transition("res://src/file_select.tscn"))
-	clear_mem_button.pressed.connect(Memory.clear)
+	back_button.pressed.connect(
+		func():
+			Executor.stop()
+			Executor.code.clear()
+			for register: String in Executor.REGISTERS:
+				Executor.set(register, 0x0)
+			Memory.clear()
+			SceneTransition.transition("res://src/file_select.tscn")
+	)
+	clear_mem_button.pressed.connect(func():
+		Memory.clear()
+		for register: String in Executor.REGISTERS:
+			Executor.set(register, 0x0)
+	)
 	
 
 	code.add_comment_delimiter(Executor.COMMENT_CHARACTER, "", true)
@@ -72,6 +88,7 @@ func _ready() -> void:
 
 	console_button.pressed.connect(console_container.show)
 	console_close_button.pressed.connect(console_container.hide)
+	clear_console_button.pressed.connect(func(): console_text.text = "")
 
 
 
@@ -85,7 +102,7 @@ func _process(_delta: float) -> void:
 
 func _update_registers() -> void:
 	registers_label.text = ""
-	for reg: String in Executor.POSSIBLE_REGISTERS:
+	for reg: String in Executor.REGISTERS:
 		if ["r13", "r14", "r15"].has(reg): continue
 		var value: int = Executor.get(reg)
 		var value_text: String
@@ -135,6 +152,8 @@ func _step() -> void:
 	code.set_line_as_breakpoint(last_error_line, false)
 	if Executor.code.is_empty():
 		Executor.parse(code.text)
+	if Executor.pc > Executor.code.keys()[-1]:
+		Executor.reset_pc()
 	Executor.start()
 	Executor.run_line()
 	Executor.stop()

@@ -1,4 +1,4 @@
-[gd_resource type="Theme" load_steps=16 format=3 uid="uid://bd0roebqk5rwt"]
+[gd_resource type="Theme" load_steps=17 format=3 uid="uid://bd0roebqk5rwt"]
 
 [ext_resource type="FontFile" uid="uid://dtwyvia1o8rd" path="res://font/RobotoMono-Medium.ttf" id="1_7jxve"]
 [ext_resource type="FontFile" uid="uid://ckbu4d77rnjit" path="res://font/Roboto-Medium.ttf" id="2_ow5xr"]
@@ -54,6 +54,8 @@ bg_color = Color(0.9, 0.8325, 0.63, 1)
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_b34ge"]
 bg_color = Color(0.9, 0.9, 0.9, 1)
 
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_1d0ro"]
+
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_v3qwf"]
 content_margin_left = 16.0
 bg_color = Color(0.9, 0.9, 0.9, 1)
@@ -76,6 +78,7 @@ thickness = 3
 vertical = true
 
 [resource]
+resource_name = "Light theme"
 default_font = ExtResource("2_ow5xr")
 default_font_size = 24
 AccentButton/base_type = &"Button"
@@ -106,6 +109,7 @@ CodeEdit/constants/line_spacing = 0
 CodeEdit/font_sizes/font_size = 24
 CodeEdit/fonts/font = ExtResource("1_7jxve")
 CodeEdit/styles/normal = SubResource("StyleBoxFlat_b34ge")
+FlatButton/styles/focus = SubResource("StyleBoxEmpty_1d0ro")
 Label/colors/font_color = Color(0.129412, 0.129412, 0.129412, 1)
 Label/font_sizes/font_size = 20
 LineEdit/colors/caret_color = Color(0.133333, 0.133333, 0.133333, 1)
@@ -115,6 +119,7 @@ LineEdit/colors/font_uneditable_color = Color(0.129412, 0.129412, 0.129412, 0.50
 LineEdit/styles/normal = SubResource("StyleBoxFlat_v3qwf")
 Panel/styles/panel = SubResource("StyleBoxFlat_u6j2w")
 PanelContainer/styles/panel = SubResource("StyleBoxFlat_56qo2")
+VSeparator/constants/separation = 3
 VSeparator/styles/separator = SubResource("StyleBoxLine_rtqmf")
 metadata/Palette = "https://www.materialpalette.com/amber/yellow"
 metadata/bg = Color(0.980392, 0.980392, 0.980392, 1)

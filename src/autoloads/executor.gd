@@ -32,7 +32,7 @@ const WORD_SIZE: int = 32
 const MAX_UINT32: int = 0xFFFFFFFF
 const MAX_UINT16: int = 0xFFFF
 const MAX_UINT8: int = 0xFF
-const POSSIBLE_REGISTERS: Array[String] = ["r0", "r1", "r2", "r3", "r4", "r5", "r6", "r7", "r8", "r9", "r10", "r11", "r12", "r13", "r14", "r15", "sp", "lr", "pc"]
+const REGISTERS: Array[String] = ["r0", "r1", "r2", "r3", "r4", "r5", "r6", "r7", "r8", "r9", "r10", "r11", "r12", "r13", "r14", "r15", "sp", "lr", "pc"]
 
 var registers: Dictionary = {
 	"r0": 0x0,
@@ -216,7 +216,14 @@ func parse(lines: String) -> void:
 		code[i * 0x4] = token
 
 	if code.size() > 0:
-		pc = code.keys()[0]
+		reset_pc()
+
+func reset_pc() -> void:
+	if code.size() == 0:
+		pc = 0x0
+		return	
+	pc = code.keys()[0]
+
 
 
 func run_line() -> void:

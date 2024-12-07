@@ -49,9 +49,9 @@ vertical_alignment = 1
 
 [node name="ThemeButton" type="Button" parent="Panel/HBoxContainer"]
 unique_name_in_owner = true
-visible = false
 layout_mode = 2
-text = " DARK"
+theme_type_variation = &"FlatButton"
+text = "DARK"
 flat = true
 
 [node name="ScrollContainer" type="ScrollContainer" parent="."]

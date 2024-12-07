@@ -23,12 +23,14 @@ Command="*res://src/autoloads/command.gd"
 Memory="*res://src/autoloads/memory.gd"
 FileManager="*res://src/autoloads/file_manager.gd"
 SceneTransition="*res://src/autoloads/scene_transition.gd"
+Settings="*res://src/autoloads/settings.gd"
 EmbedGameAutoload="*res://addons/fabimakesgames.embed_game/embed_game_autoload.gd"
 
 [display]
 
 window/stretch/mode="canvas_items"
 window/stretch/aspect="expand"
+window/handheld/orientation=6
 
 [dotnet]
 

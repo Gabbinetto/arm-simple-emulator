@@ -231,10 +231,8 @@ func parse_value(value: String) -> int:
 
 func parse_immediate(num: String) -> int:
 	var num_string: String = num.lstrip(Executor.IMMEDIATE_CHARACTER)
-	if num_string.containsn("x"):
+	if num_string.containsn("0x"):
 		return num_string.hex_to_int()
-	elif num_string.containsn("b"):
-		return num_string.bin_to_int()
 	else:
 		return int(num)
 
@@ -302,12 +300,13 @@ func reg(register: String) -> int:
 
 
 func check_register(s: String) -> bool:
-	return Executor.POSSIBLE_REGISTERS.has(s)
+	return Executor.REGISTERS.has(s)
 
 func check_immediate(s: String) -> bool:
 	if s[0] != Executor.IMMEDIATE_CHARACTER:
 		return false
-	return s.substr(1).is_valid_int()
+	s = s.substr(1).replacen("0x", "")
+	return s.is_valid_int() or s.is_valid_hex_number()
 
 func check_value(s: String) -> bool:
 	if s[0] == "r" or ["sp", "lr", "lr"].has(s):
