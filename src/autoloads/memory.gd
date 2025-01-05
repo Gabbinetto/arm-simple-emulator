@@ -6,6 +6,7 @@ const STACK_POINTER_ADDRESS: int = Executor.MAX_UINT32 - 3
 
 var _memory: Dictionary = {}
 
+
 func mem_store(address: int, value: int) -> void:
     _memory[address] = Executor.bit32(value)
 

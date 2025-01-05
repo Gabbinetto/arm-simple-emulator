@@ -47,4 +47,4 @@ func _ready() -> void:
 			filename += ".arm"
 		SceneTransition.transition("res://src/main.tscn", {"filename": filename, "text": ""})
 	confirm_button.pressed.connect(create_file)
-	filename_input.text_submitted.connect(create_file)
+	filename_input.text_submitted.connect(func(_new_text: String): create_file.call())

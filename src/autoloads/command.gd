@@ -232,6 +232,7 @@ func parse_value(value: String) -> int:
 func parse_immediate(num: String) -> int:
 	var num_string: String = num.lstrip(Executor.IMMEDIATE_CHARACTER)
 	if num_string.containsn("0x"):
+		print(num_string)
 		return num_string.hex_to_int()
 	else:
 		return int(num)
@@ -240,8 +241,10 @@ func parse_immediate(num: String) -> int:
 func parse_address(args: Array[String]) -> int:
 	var remove_brackets: Callable = func(string: String): return string.lstrip("[").rstrip("]")
 
-	if args.front() == Executor.IMMEDIATE_CHARACTER:
-		return parse_immediate(args.front())
+	var arg0: String = remove_brackets.call(args.front())
+
+	if arg0[0] == Executor.IMMEDIATE_CHARACTER:
+		return parse_immediate(arg0)
 
 	var pre_index_end: int = 0
 	for i: int in args.size():
@@ -252,9 +255,9 @@ func parse_address(args: Array[String]) -> int:
 	var address: int = 0x0
 	if pre_index_end == 0 and args.size() == 1:
 		# [rX]
-		return Executor.get(remove_brackets.call(args.front()))
+		return Executor.get(arg0)
 
-	var register: String = remove_brackets.call(args.front())
+	var register: String = arg0
 	address = Executor.get(register)
 	var offset: int = 0
 	if args.size() == 2:
